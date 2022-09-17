@@ -1,22 +1,19 @@
 (function($) {
-    $('.location').on('change',function(e) {
-        e.preventDefault();
+   $('.location').change(function() {
+        let select = $(this).val();
+        let lei = '&nbsp;<span class="woocommerce-Price-currencySymbol">lei</span>';
+        let price = $('.woocommerce-Price-amount bdi');
 
-        var inscript_place = $(this).val();
+        price.empty();
 
-        $.ajax({
-            url: WPR.ajax_url,
-            type: 'GET',
-            data: {
-                action: 'setprice_action',
-                inscript_place: inscript_place
-            },
-            success: function(response){
-                console.log(response);
-            },
-            error: function(errorThrown){
-                console.log(errorThrown);
-            }
-        });
-    });
+        if(select === 'fata' || select === 'spate') {  
+            price.append(parseFloat(WPR.product_price) + parseFloat(WPR.one_side) + lei);
+
+        } else if(select === 'fataspate') {
+            price.append(parseFloat(WPR.product_price) + parseFloat(WPR.two_sides) + lei);
+        } else {
+            price.append(parseFloat(WPR.product_price) + lei);
+        }
+   });
+
 }) (jQuery);

@@ -21,7 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header( 'shop' ); ?>
 
+
 	<?php
+
+    
+
 		/**
 		 * woocommerce_before_main_content hook.
 		 *
@@ -34,25 +38,27 @@ get_header( 'shop' ); ?>
     
     <?php
 
-    setprice_scripts();
+        $product = wc_get_product();
+        $prod_id = $product->get_id();
+        $prod_category = wc_get_product_category_list($prod_id);
+        $one_side = 50;
+        $two_sides = 85;
 
-    function setprice_scripts() {
-        wp_enqueue_script( 'setprice', get_stylesheet_directory_uri() . '/assets/js/setprice.js', array( 'jquery' ), false, true );
+        wp_enqueue_script( 'wpr_setprice', get_stylesheet_directory_uri() . '/assets/js/setprice.js', array( 'jquery' ), '1.0.0', true );
         wp_localize_script( 
-            'setprice', 
+            'wpr_setprice', 
             'WPR', 
             array( 
-                'ajax_url'   => admin_url( 'admin-ajax.php' ),
-                'ajax_nonce' => wp_create_nonce( 'setprice' )
+                'product_price' => $product->get_price(),
+                'one_side' => $one_side,
+                'two_sides' => $two_sides
             )
         );
-    }
+    
 
     // Add select and input fields only for T-shirt category
     
-    $product = wc_get_product();
-    $prod_id = $product->get_id();
-    $prod_category = wc_get_product_category_list($prod_id);
+    
 
     if ( str_contains( $prod_category, 'T-shirt' ) ) {
         

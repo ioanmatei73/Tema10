@@ -528,3 +528,44 @@ function update_price( $cart ) {
     }
 }
 add_action('woocommerce_before_calculate_totals', 'update_price', 99);
+
+// Add meta product details
+function add_product_details_meta($item_data, $cart_item){
+
+	if(array_key_exists('loc_data', $cart_item))
+    {
+        $loc_details = $cart_item['loc_data'];
+
+        $item_data[] = array(
+            'key'   => 'Place of printing',
+            'value' => $loc_details
+        );
+	}
+	if(array_key_exists('text_data', $cart_item))
+	{
+		$text_details = $cart_item['text_data'];
+	
+		$item_data[] = array(
+			'key'   => 'Your printed text',
+			'value' => $text_details
+		);
+    }
+
+    return $item_data;
+}
+add_filter('woocommerce_get_item_data','add_product_details_meta',10,2);
+
+// Add product details to order
+function add_product_order_line_meta($item, $cart_item_key, $values, $order)
+{
+
+    if(array_key_exists('loc_data', $values))
+    {
+        $item->add_meta_data('Place of printing',$values['loc_data']);
+    }
+	if(array_key_exists('text_data', $values))
+    {
+        $item->add_meta_data('Your printed text',$values['text_data']);
+    }
+}
+add_action( 'woocommerce_checkout_create_order_line_item', 'add_product_order_line_meta',10,4 );
